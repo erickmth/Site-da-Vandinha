@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Administração – Site da Vandinha Blogueira</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;600;800&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#F7A8C4;--light:#FCE4EC;--strong:#D94F87;--bg:#FFF7FA;--white:#fff;--wine:#642D45;--gold:#C9A25B;--shadow:0 6px 22px rgba(100,45,69,.1)}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden}
+body{font-family:Nunito,system-ui,sans-serif;color:var(--wine);background:var(--bg);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:0 14px 90px}
+header{text-align:center;padding:20px 8px 6px}
+.brand{font-family:'Great Vibes',cursive;font-size:clamp(2.1rem,9vw,3.2rem);line-height:1.1;margin:0;text-shadow:1px 1px 0 var(--gold)}
+header p{margin:2px 0 0;font-weight:600}
+.warn{background:var(--light);border:1px solid var(--pink);border-radius:16px;padding:10px 14px;font-size:.88rem;margin-top:12px}
+h2{font-family:Lora,serif;font-size:1.35rem;margin:0 0 12px}
+.card{background:var(--white);border-radius:22px;box-shadow:var(--shadow);padding:18px;margin-top:16px;border:1px solid var(--light)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.stat{background:var(--light);border-radius:16px;padding:12px 14px;min-width:0}
+.stat b{display:block;font-size:.85rem}
+.stat span{font-family:Lora,serif;font-size:1.15rem;overflow-wrap:anywhere}
+.badge{display:inline-block;border-radius:999px;padding:2px 12px;font-weight:800;font-size:.85rem;background:#ddd;color:#444}
+.badge.on{background:var(--strong);color:#fff}
+label{display:block;font-weight:800;margin:10px 0 4px}
+input,textarea{width:100%;font:inherit;color:var(--wine);border:2px solid var(--pink);border-radius:14px;padding:12px;background:#fff;min-height:48px}
+textarea{resize:vertical;min-height:80px}
+button{font:inherit;font-weight:800;border:0;border-radius:999px;min-height:48px;padding:0 20px;cursor:pointer;background:var(--strong);color:#fff;transition:transform .15s,opacity .15s}
+button.alt{background:#fff;color:var(--strong);border:2px solid var(--pink)}
+button.danger{background:#fff;color:#a3123f;border:2px solid #e8a3b8}
+button.sm{min-height:44px;min-width:44px;padding:0 12px}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:active:not(:disabled){transform:scale(.97)}
+:focus-visible{outline:3px solid var(--wine);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.q{display:flex;gap:8px;align-items:flex-start;margin-top:10px;background:var(--bg);border-radius:16px;padding:10px;border:1px solid var(--light)}
+.q .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--pink);display:grid;place-items:center;font-weight:800;margin-top:8px}
+.q textarea{min-height:64px}
+.q .ctl{display:flex;flex-direction:column;gap:6px}
+.topic{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--light)}
+.topic div.t{flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
+.cur{display:flex;gap:8px;align-items:center;width:100%;text-align:left;background:#fff;color:var(--wine);border:2px solid var(--light);border-radius:16px;margin-top:8px;padding:8px 14px;min-height:48px;font-weight:600}
+.cur.sel{border-color:var(--strong);background:var(--light)}
+.preview{background:linear-gradient(135deg,var(--strong),#b93a70);color:#fff;border:2px solid var(--gold);border-radius:18px;padding:14px 16px;font-weight:800;margin-top:12px;overflow-wrap:anywhere}
+.muted{opacity:.75}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:92vw;background:var(--wine);color:#fff;padding:12px 20px;border-radius:999px;font-weight:800;box-shadow:var(--shadow);z-index:9}
+#toast.err{background:#a3123f}
+dialog{border:2px solid var(--pink);border-radius:22px;padding:22px;color:var(--wine);max-width:min(92vw,420px)}
+dialog::backdrop{background:rgba(100,45,69,.4)}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1 class="brand">Site da Vandinha Blogueira</h1>
+  <p>Administração da live</p>
+  <div class="warn">Esta página não tem senha. Quem tiver o endereço consegue alterar a pauta e os avisos. Não divulgue o link.</div>
+</header>
+
+<section class="card" aria-labelledby="hDash">
+  <h2 id="hDash">Painel</h2>
+  <div class="grid">
+    <div class="stat"><b>Pauta publicada</b><span id="dTopic">—</span></div>
+    <div class="stat"><b>Perguntas</b><span id="dCount">—</span></div>
+    <div class="stat"><b>Pergunta atual</b><span id="dPos">—</span></div>
+    <div class="stat"><b>Aviso da live</b><span id="dNotice"><span class="badge">Encerrado</span></span></div>
+  </div>
+  <p id="syncErr" class="muted" hidden>Sem conexão com o servidor. Os dados podem estar desatualizados.</p>
+</section>
+
+<section class="card" aria-labelledby="hCur">
+  <h2 id="hCur">Pergunta atual da live</h2>
+  <div class="row" style="margin-top:0">
+    <button class="alt" id="curPrev" type="button">Anterior</button>
+    <button id="curNext" type="button">Próxima</button>
+  </div>
+  <div id="curList"></div>
+  <p id="curEmpty" class="muted">Publique uma pauta para controlar as perguntas.</p>
+</section>
+
+<section class="card" aria-labelledby="hNotice">
+  <h2 id="hNotice">Aviso da live</h2>
+  <label for="nText">Texto do aviso</label>
+  <textarea id="nText" maxlength="300" placeholder="Ex.: Debate aberto: participe nos comentários."></textarea>
+  <div class="preview" id="nPreview" hidden></div>
+  <div class="row">
+    <button id="nSave" type="button">Iniciar aviso</button>
+    <button class="danger" id="nEnd" type="button">Encerrar aviso</button>
+  </div>
+</section>
+
+<section class="card" aria-labelledby="hNew">
+  <h2 id="hNew">Criar nova pauta para live</h2>
+  <p id="editing" class="muted" hidden></p>
+  <label for="tTitle">Título da pauta</label>
+  <input id="tTitle" maxlength="200" placeholder="Qual é o assunto de hoje?">
+  <div id="qList"></div>
+  <div class="row">
+    <button class="alt" id="qAdd" type="button">Adicionar pergunta</button>
+  </div>
+  <div class="row">
+    <button id="tPublish" type="button">Publicar pauta</button>
+    <button class="alt" id="tSave" type="button">Salvar rascunho</button>
+    <button class="alt" id="tReset" type="button">Limpar editor</button>
+  </div>
+</section>
+
+<section class="card" aria-labelledby="hTopics">
+  <h2 id="hTopics">Pautas salvas</h2>
+  <div id="tList"><p class="muted">Carregando…</p></div>
+</section>
+</div>
+
+<dialog id="dlg"><p id="dlgMsg"></p><div class="row"><button class="alt" id="dlgNo" type="button">Cancelar</button><button id="dlgYes" type="button">Confirmar</button></div></dialog>
+<div id="toast" role="status" hidden></div>
+
+<script>
+// Endereço da API (altere aqui, se necessário).
+const API_BASE = "https://telegramm.pythonanywhere.com";
+const TIMEOUT_MS = 10000, POLL_MS = 2000;
+const $ = id => document.getElementById(id);
+let live = null, lastJson = "", inflight = false, busy = false;
+let editor = {id: null, title: "", questions: []}, dirty = false, uid = 0;
+
+async function api(path, opts = {}) {
+  const ctrl = new AbortController(), t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(API_BASE + path, {...opts, signal: ctrl.signal,
+      headers: opts.body ? {"Content-Type": "application/json"} : undefined});
+    let d; try { d = await res.json(); } catch { throw new Error("Resposta inválida do servidor."); }
+    if (!res.ok) throw new Error(d && d.erro || "Erro no servidor.");
+    return d;
+  } finally { clearTimeout(t); }
+}
+
+let toastTimer;
+function toast(msg, err) {
+  const t = $("toast"); t.textContent = msg; t.className = err ? "err" : ""; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, 3500);
+}
+
+// Executa uma ação de API sem permitir envios duplicados.
+async function act(fn, okMsg, failMsg) {
+  if (busy) return false;
+  busy = true; document.body.style.cursor = "progress";
+  document.querySelectorAll("button").forEach(b => b.dataset.was = b.disabled ? "1" : "");
+  document.querySelectorAll("button").forEach(b => b.disabled = true);
+  try { await fn(); if (okMsg) toast(okMsg); return true; }
+  catch (e) { toast((failMsg || "Não foi possível salvar. Tente novamente.") + (e.message ? " " + e.message : ""), true); return false; }
+  finally {
+    busy = false; document.body.style.cursor = "";
+    document.querySelectorAll("button").forEach(b => b.disabled = false);
+    renderEditor(); await refreshAll();
+  }
+}
+
+function confirmBox(msg) {
+  return new Promise(res => {
+    const d = $("dlg"); $("dlgMsg").textContent = msg;
+    const done = v => { d.close(); res(v); };
+    $("dlgYes").onclick = () => done(true); $("dlgNo").onclick = () => done(false);
+    d.oncancel = () => res(false); d.showModal();
+  });
+}
+
+/* ---------- Painel e controle da live ---------- */
+function renderLive() {
+  const d = live; if (!d) return;
+  const has = d.topic && d.questions.length;
+  $("dTopic").textContent = d.topic ? d.topic.title : "Nenhuma pauta publicada";
+  $("dCount").textContent = d.topic ? String(d.questions.length) : "—";
+  $("dPos").textContent = has ? (d.current_index + 1) + " de " + d.questions.length : "—";
+  $("dNotice").innerHTML = "";
+  const b = document.createElement("span"); b.className = "badge" + (d.notice.active ? " on" : "");
+  b.textContent = d.notice.active ? "No ar" : "Encerrado"; $("dNotice").append(b);
+  $("curEmpty").hidden = !!has;
+  $("curPrev").disabled = !has || d.current_index <= 0 || busy;
+  $("curNext").disabled = !has || d.current_index >= d.questions.length - 1 || busy;
+  const list = $("curList"); list.innerHTML = "";
+  (d.questions || []).forEach((q, i) => {
+    const b = document.createElement("button"); b.type = "button";
+    b.className = "cur" + (q.id === d.current_question_id ? " sel" : "");
+    b.setAttribute("aria-pressed", q.id === d.current_question_id);
+    b.textContent = (i + 1) + ". " + q.text;
+    b.onclick = () => act(() => api("/api/current", {method: "PUT", body: JSON.stringify({question_id: q.id})}), null, "Não foi possível trocar de pergunta.");
+    list.append(b);
+  });
+  if (document.activeElement !== $("nText") && !nDirty) $("nText").value = d.notice.text || "";
+  $("nEnd").disabled = !d.notice.active || busy;
+  $("nSave").textContent = d.notice.active ? "Atualizar aviso" : "Iniciar aviso";
+}
+
+async function poll() {
+  if (inflight || busy || document.hidden) return;
+  inflight = true;
+  try {
+    const d = await api("/api/state");
+    if (!d || !Array.isArray(d.questions) || !d.notice) throw new Error();
+    $("syncErr").hidden = true;
+    const j = JSON.stringify(d); if (j !== lastJson) { lastJson = j; live = d; renderLive(); renderTopics(); }
+  } catch { $("syncErr").hidden = false; }
+  finally { inflight = false; }
+}
+
+$("curPrev").onclick = () => act(() => api("/api/current", {method: "PUT", body: JSON.stringify({direction: "prev"})}), null, "Não foi possível trocar de pergunta.");
+$("curNext").onclick = () => act(() => api("/api/current", {method: "PUT", body: JSON.stringify({direction: "next"})}), null, "Não foi possível trocar de pergunta.");
+
+/* ---------- Aviso ---------- */
+let nDirty = false;
+$("nText").addEventListener("input", () => {
+  nDirty = true; const v = $("nText").value.trim(); const p = $("nPreview");
+  p.hidden = !v; p.textContent = v;
+});
+$("nSave").onclick = async () => {
+  const text = $("nText").value.trim();
+  if (!text) return toast("Escreva o texto do aviso.", true);
+  const was = live && live.notice.active;
+  if (await act(() => api("/api/notice", {method: "PUT", body: JSON.stringify({text})}), was ? "Aviso da live atualizado." : "Aviso da live iniciado.")) { nDirty = false; $("nPreview").hidden = true; }
+};
+$("nEnd").onclick = async () => {
+  if (!await confirmBox("Encerrar o aviso? Ele sai da página pública.")) return;
+  if (await act(() => api("/api/notice/end", {method: "POST"}), "Aviso da live encerrado.")) nDirty = false;
+};
+
+/* ---------- Editor de pauta ---------- */
+function newQ(text, id) { return {key: ++uid, id: id || null, text: text || ""}; }
+function markDirty() { dirty = true; }
+window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+function renderEditor() {
+  $("tTitle").value = editor.title;
+  $("editing").hidden = !editor.id;
+  $("editing").textContent = editor.id ? "Você está editando uma pauta salva." : "";
+  const list = $("qList"); list.innerHTML = "";
+  editor.questions.forEach((q, i) => {
+    const row = document.createElement("div"); row.className = "q";
+    const n = document.createElement("div"); n.className = "n"; n.textContent = i + 1;
+    const ta = document.createElement("textarea"); ta.value = q.text; ta.maxLength = 1000;
+    ta.setAttribute("aria-label", "Pergunta " + (i + 1)); ta.placeholder = "Escreva a pergunta";
+    ta.oninput = () => { q.text = ta.value; markDirty(); };
+    const ctl = document.createElement("div"); ctl.className = "ctl";
+    const mk = (label, txt, fn, dis, cls) => { const b = document.createElement("button"); b.type = "button"; b.className = "sm " + (cls || "alt"); b.textContent = txt; b.setAttribute("aria-label", label); b.disabled = dis; b.onclick = fn; return b; };
+    ctl.append(
+      mk("Subir pergunta", "↑", () => move(i, -1), i === 0),
+      mk("Descer pergunta", "↓", () => move(i, 1), i === editor.questions.length - 1),
+      mk("Excluir pergunta", "✕", () => removeQ(i), false, "danger"));
+    row.append(n, ta, ctl); list.append(row);
+  });
+}
+function move(i, d) {
+  const a = editor.questions, j = i + d; if (j < 0 || j >= a.length) return;
+  [a[i], a[j]] = [a[j], a[i]]; markDirty(); renderEditor();
+}
+async function removeQ(i) {
+  const q = editor.questions[i];
+  if (q.text.trim() && !await confirmBox("Excluir esta pergunta?")) return;
+  editor.questions.splice(i, 1); markDirty(); renderEditor(); toast("Pergunta excluída.");
+}
+$("qAdd").onclick = () => {
+  editor.questions.push(newQ()); markDirty(); renderEditor();
+  const t = $("qList").querySelectorAll("textarea"); t[t.length - 1].focus(); toast("Pergunta adicionada.");
+};
+$("tTitle").oninput = () => { editor.title = $("tTitle").value; markDirty(); };
+
+function payload(publish) {
+  const title = editor.title.trim();
+  if (!title) { toast("Informe o título da pauta.", true); return null; }
+  if (!editor.questions.length) { toast("Adicione ao menos uma pergunta.", true); return null; }
+  if (editor.questions.some(q => !q.text.trim())) { toast("Há perguntas em branco. Preencha ou exclua.", true); return null; }
+  return {title, publish, questions: editor.questions.map(q => ({id: q.id, text: q.text.trim()}))};
+}
+async function saveTopic(publish) {
+  const p = payload(publish); if (!p) return;
+  if (publish && live && live.topic && live.topic.id !== editor.id && !await confirmBox("Substituir a pauta publicada por esta?")) return;
+  const ok = await act(async () => {
+    if (editor.id) await api("/api/topics/" + editor.id, {method: "PUT", body: JSON.stringify(p)});
+    else await api("/api/topics", {method: "POST", body: JSON.stringify(p)});
+  }, publish ? "Pauta publicada com sucesso." : "Rascunho salvo.");
+  if (ok) { dirty = false; editor = {id: null, title: "", questions: []}; renderEditor(); }
+}
+$("tPublish").onclick = () => saveTopic(true);
+$("tSave").onclick = () => saveTopic(false);
+$("tReset").onclick = async () => {
+  if (dirty && !await confirmBox("Descartar as alterações não salvas?")) return;
+  dirty = false; editor = {id: null, title: "", questions: []}; renderEditor();
+};
+
+/* ---------- Lista de pautas ---------- */
+let topics = null;
+async function loadTopics() {
+  try { topics = await api("/api/topics"); renderTopics(); }
+  catch { $("tList").innerHTML = ""; const p = document.createElement("p"); p.className = "muted"; p.textContent = "Não foi possível carregar as pautas."; $("tList").append(p); }
+}
+function renderTopics() {
+  if (!Array.isArray(topics)) return;
+  const box = $("tList"); box.innerHTML = "";
+  if (!topics.length) { const p = document.createElement("p"); p.className = "muted"; p.textContent = "Nenhuma pauta salva ainda. Crie a primeira acima."; box.append(p); return; }
+  const pubId = live && live.topic ? live.topic.id : null;
+  topics.forEach(t => {
+    const row = document.createElement("div"); row.className = "topic";
+    const info = document.createElement("div"); info.className = "t";
+    info.textContent = t.title + " (" + t.total + (t.total === 1 ? " pergunta)" : " perguntas)");
+    if (t.id === pubId) { const b = document.createElement("span"); b.className = "badge on"; b.textContent = "Publicada"; b.style.marginLeft = "8px"; info.append(b); }
+    const ctl = document.createElement("div"); ctl.className = "row"; ctl.style.margin = "0";
+    const mk = (txt, fn, cls) => { const b = document.createElement("button"); b.type = "button"; b.className = "sm " + (cls || "alt"); b.textContent = txt; b.onclick = fn; return b; };
+    ctl.append(
+      mk("Editar", () => editTopic(t.id)),
+      mk("Publicar", async () => {
+        if (t.id !== pubId && pubId && !await confirmBox("Substituir a pauta publicada por esta?")) return;
+        act(() => api("/api/topics/" + t.id + "/publish", {method: "POST"}), "Pauta publicada com sucesso.", "Não foi possível publicar.");
+      }, ""),
+      mk("Excluir", async () => {
+        if (!await confirmBox("Excluir a pauta “" + t.title + "” e todas as suas perguntas?")) return;
+        act(() => api("/api/topics/" + t.id, {method: "DELETE"}), "Pauta excluída.", "Não foi possível excluir.");
+      }, "danger"));
+    row.append(info, ctl); box.append(row);
+  });
+}
+async function editTopic(id) {
+  if (dirty && !await confirmBox("Descartar as alterações não salvas do editor?")) return;
+  try {
+    const t = await api("/api/topics/" + id);
+    editor = {id: t.id, title: t.title, questions: t.questions.map(q => newQ(q.text, q.id))};
+    dirty = false; renderEditor(); $("hNew").scrollIntoView({behavior: "smooth"});
+  } catch (e) { toast("Não foi possível abrir a pauta. " + e.message, true); }
+}
+
+async function refreshAll() { lastJson = ""; await Promise.all([poll(), loadTopics()]); renderLive(); }
+
+renderEditor(); refreshAll(); setInterval(poll, POLL_MS);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) poll(); });
+</script>
+</body>
+</html>
